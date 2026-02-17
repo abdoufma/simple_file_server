@@ -12,7 +12,7 @@ function arg(name, def) {
   return i >= 0 ? args[i + 1] : def;
 }
 
-const ROOT = path.resolve(arg("dir", process.cwd()));
+const ROOT = path.resolve(arg("dir", './files'));
 const PORT = parseInt(arg("port", "3000"), 10);
 const HOST = arg("host", "0.0.0.0");
 

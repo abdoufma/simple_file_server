@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>File Upload</title>
+  <style>
+    body { font-family: Arial; max-width: 600px; margin: 50px auto; padding: 20px; }
+    .upload-box { border: 2px dashed #ccc; padding: 40px; text-align: center; }
+    button { padding: 10px 20px; font-size: 16px; cursor: pointer; }
+    #progress { margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <h1>Upload File to Machine A</h1>
+  <div class="upload-box">
+    <input type="file" id="fileInput" />
+    <br><br>
+    <button onclick="uploadFile()">Upload</button>
+  </div>
+  <div id="progress"></div>
+
+  <script type="module">
+    //@ts-check
+    window.uploadFile = async function () {
+      const fileInput = document.getElementById('fileInput');
+      const progress = document.getElementById('progress');
+      const file = fileInput.files[0];
+
+      if (!file) {
+        alert('Please select a file');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('file', file);
+
+      progress.innerHTML = 'Uploading...';
+
+      try {
+        const data = await fetch('/upload', { method: 'POST', body: formData }).then(r => r.json());
+        progress.innerHTML = '<span style="color: green;">✓ ' + data.message + '</span>';
+        fileInput.value = '';
+      } catch(err){
+        progress.innerHTML = '<span style="color: red;">✗ Upload failed: ' + err.message + '</span>';
+      }
+    }
+
+    // test stream
+    const response = await fetch ('/notes');
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let result = await reader.read();
+    while (!result.done) {
+      const text = decoder.decode(result.value);
+      console.log(text);
+      result = await reader.read();
+    }
+  </script>
+</body>
+</html>
