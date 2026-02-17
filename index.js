@@ -2,9 +2,13 @@
 // Minimal LAN file downloader (zero deps)
 // Usage: node share.js --dir ./share --port 3000 --host 0.0.0.0
 
-const http = require("http");
-const fs = require("fs");
-const path = require("path");
+import http from "http";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+import os from "os";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const args = process.argv.slice(2);
 function arg(name, def) {
@@ -101,7 +105,7 @@ const server = http.createServer((req, res) => {
 });
 
 server.listen(PORT, HOST, () => {
-  const ifaces = Object.values(require("os").networkInterfaces() || {}).flat().filter(i => i && !i.internal && i.family === "IPv4");
+  const ifaces = Object.values(os.networkInterfaces() || {}).flat().filter(i => i && !i.internal && i.family === "IPv4");
   const ips = ifaces.map(i => i.address);
   console.log(`📁 Sharing: ${ROOT}`);
   console.log(`🚀 Listening on http://${HOST === "0.0.0.0" ? (ips[0] || "your_LAN_IP") : HOST}:${PORT}`);
